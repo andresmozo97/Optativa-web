@@ -12,18 +12,30 @@ const client = new MongoClient(url, {useUnifiedTopology : true} );  // el segund
 console.log("cliente creado,  conectando...");
 
 let userSchema = new Schema({ // define a schema
-    nombre: String,
-    apellido: String,
-    peso: Number,
-    dni: Number,
-    fechaInicio: Date,
-    clases: [],
-    pagos: []
+    nombre: {type : String },
+    apellido: {type : String },
+    peso: {type : Number },
+    dni: {type : Number },
+    fechaInicio: {type : Date },
+    clases: {type : [] },
+    pagos: {type : [] }
     });
 
-let userModel = mongoose.model('User', userSchema);
+/*
+    userSchema.statics.findPorDNI = function (dni , callback){
+        return this.find( {dni: new RegExp(dni , 'i') }, callback)
+    }
+*/
 
-let new_user1 = new userModel({
+
+userSchema.statics.findPorNombre = function (nombre , callback){
+    console.log("Entro al metodoo")
+    return this.find( {nombre: "Roger"/*new RegExp(nombre, 'i')*/ }, callback) //VER BIEN Q ES ESTO DE RegExp
+}
+
+let User = mongoose.model('User', userSchema);
+
+let new_user1 = new User({
     nombre: 'Lionel',
     apellido: 'Messi',
     peso: '10',
@@ -33,7 +45,7 @@ let new_user1 = new userModel({
     pagos: [10,100,1000]
 });
 
-let new_user2 = new userModel({
+let new_user2 = new User({
     nombre: 'Michael ',
     apellido: 'Jordan',
     peso: '23',
@@ -43,8 +55,8 @@ let new_user2 = new userModel({
     pagos: [23,2323,23000]
 });
 
-let new_user3 = new userModel({
-    nombre: 'Roger ',
+let new_user3 = new User({
+    nombre: 'Roger',
     apellido: 'Federer',
     peso: '80',
     dni: '80808080',
@@ -57,7 +69,7 @@ let new_user3 = new userModel({
 Instance methods
 // define a schema
 var animalSchema = new Schema({ name: String, type: String });
-// assign a function to the "methods" object of our animalSchema
+
 animalSchema.methods.findSimilarTypes = function (cb) {
 return this.model('Animal').find({ type: this.type }, cb);
 }
@@ -70,8 +82,6 @@ console.log(dogs); // woof
 
 
 Statics
-
-// assign a function to the "statics" object of our animalSchema
 animalSchema.statics.findByName = function (name, cb) {
 return this.find({ name: new RegExp(name, 'i') }, cb);
 }
@@ -85,17 +95,7 @@ console.log(animals);
 // DE INSTANCIA EL DE MODIFICAR EL USUARIO
 // 
 */
-userSchema.statics.findPorDNI = function (dni , callback){
-    return this.find( {dni: new RegExp(dni , 'i') }, callback)
-}
-/*
-userModel.findPorDNI( '10101010', function (err, users) {
-    console.log(users);
-});
-*/
-userSchema.statics.findPorNombre = function (nombre , callback){
-    return this.find( {nombre: new RegExp(nombre, 'i') }, callback) //VER BIEN Q ES ESTO DE RegExp
-}
+
 
 
 
@@ -110,11 +110,15 @@ mongoose.connect(url, function (err) {
                 if (err) {
                     console.log(err);
                 } else {
-                    console.log("Agrego al usuario correctamente");
-                    userModel.findPorDNI( '10101010', function (err, users) {
+                    console.log("Agrego al usuario correctamente 2");
+                    User.findPorNombre( "Roger", function (err, users) {
+                        if (err)
+                            console.log(err);
+                        else{    
                         console.log("ABEEEEEEEER SI ANDA PERRIIIIIIIIII")
                         console.log(users);
-                    });
+                        mongoose.connection.close();
+                    }});
                     mongoose.connection.close();
                 }
             });
