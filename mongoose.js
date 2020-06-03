@@ -11,7 +11,7 @@ const url = 'mongodb://cliente:cliente@localhost:27017/' + dbName; //aca va el u
 const client = new MongoClient(url, {useUnifiedTopology : true} );  // el segundo parametro me lo pide la consola porque hay algo deprecado
 console.log("cliente creado,  conectando...");
 
-let userSchema = new Schema({ // define a schema
+var userSchema = new Schema({ // define a schema
     nombre: {type : String },
     apellido: {type : String },
     peso: {type : Number },
@@ -27,15 +27,18 @@ let userSchema = new Schema({ // define a schema
     }
 */
 
+userSchema.query.porNombre = function(name) {
+    return this.where({ nombre: new RegExp(name, 'i') });
+};
 
 userSchema.statics.findPorNombre = function (nombre , callback){
     console.log("Entro al metodoo")
     return this.find( {nombre: "Roger"/*new RegExp(nombre, 'i')*/ }, callback) //VER BIEN Q ES ESTO DE RegExp
 }
 
-let User = mongoose.model('User', userSchema);
+var User = mongoose.model('User', userSchema);
 
-let new_user1 = new User({
+var new_user1 = new User({
     nombre: 'Lionel',
     apellido: 'Messi',
     peso: '10',
@@ -45,8 +48,8 @@ let new_user1 = new User({
     pagos: [10,100,1000]
 });
 
-let new_user2 = new User({
-    nombre: 'Michael ',
+var new_user2 = new User({
+    nombre: 'Michael',
     apellido: 'Jordan',
     peso: '23',
     dni: '23232323',
@@ -55,7 +58,7 @@ let new_user2 = new User({
     pagos: [23,2323,23000]
 });
 
-let new_user3 = new User({
+var new_user3 = new User({
     nombre: 'Roger',
     apellido: 'Federer',
     peso: '80',
@@ -64,39 +67,6 @@ let new_user3 = new User({
     clases: ['Tenis'],
     pagos: [80,8080,80000]
 });
-
-/*
-Instance methods
-// define a schema
-var animalSchema = new Schema({ name: String, type: String });
-
-animalSchema.methods.findSimilarTypes = function (cb) {
-return this.model('Animal').find({ type: this.type }, cb);
-}
-Now all of our animal instances have a findSimilarTypes method available to it.
-var Animal = mongoose.model('Animal', animalSchema);
-var dog = new Animal({ type: 'dog' });
-dog.findSimilarTypes(function (err, dogs) {
-console.log(dogs); // woof
-});
-
-
-Statics
-animalSchema.statics.findByName = function (name, cb) {
-return this.find({ name: new RegExp(name, 'i') }, cb);
-}
-
-var Animal = mongoose.model( 'Animal', animalSchema);
-Animal.findByName( 'fido', function (err, animals) {
-console.log(animals);
-});
-
-//CREO Q PODRIAMOS HACER ESTATICOS EL FIND Y EL DE ELIMINAR
-// DE INSTANCIA EL DE MODIFICAR EL USUARIO
-// 
-*/
-
-
 
 
 mongoose.connect(url, function (err) {
@@ -111,20 +81,17 @@ mongoose.connect(url, function (err) {
                     console.log(err);
                 } else {
                     console.log("Agrego al usuario correctamente 2");
-                    User.findPorNombre( "Roger", function (err, users) {
-                        if (err)
-                            console.log(err);
-                        else{    
-                        console.log("ABEEEEEEEER SI ANDA PERRIIIIIIIIII")
-                        console.log(users);
-                        mongoose.connection.close();
+                    User.find().porNombre("Lionel").exec(function(err, usuarios) {
+                        console.log("Entro")
+                        console.log(usuarios);
+                    });
+                      mongoose.connection.close();
                     }});
-                    mongoose.connection.close();
+                    
                 }
             });
         }
-    });
-});
+    );
 
 
 
