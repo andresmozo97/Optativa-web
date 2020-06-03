@@ -84,8 +84,9 @@ mongoose.connect(url, function (err) {
                     User.find().porNombre("Lionel").exec(function(err, usuarios) {
                         console.log("Entro")
                         console.log(usuarios);
+                        mongoose.connection.close();
                     });
-                      mongoose.connection.close();
+                      
                     }});
                     
                 }
