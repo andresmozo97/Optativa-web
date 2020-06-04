@@ -115,7 +115,7 @@ const nuevosValores = {nombre: 'Roman'};
 
 mongoose.connect(url, function (err) {
     if (err) throw err;
-    console.log("Successfully connected");
+    console.log("Successfully connected ");
     new_user1.save(function (err) {
         if (err) console.log(err);
         else {
