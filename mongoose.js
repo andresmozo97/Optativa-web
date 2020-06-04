@@ -52,7 +52,7 @@ userSchema.statics.modifyPorDni = function (_dni , new_atts, callback){
 
 //Declaramos las funciones para el esquema payment
 paymentSchema.statics.findPago = function (_id_pago , callback){
-    return this.find( {id : _id_pago }, callback)
+    return this.find( {id_pago : _id_pago}, callback)
 }
 
 paymentSchema.statics.ModifyPago = function (_id_pago ,new_atts, callback){
@@ -69,6 +69,7 @@ var User = mongoose.model('User', userSchema);
 var Payment = mongoose.model('Payment' , paymentSchema)
 
 //Usuarios
+//Hay que crear las variables DESPUES de declarar los modelos
 var new_user1 = new User({
     nombre: 'Lionel',
     apellido: 'Messi',
@@ -101,8 +102,8 @@ var new_user3 = new User({
 
 //Pagos
 var pay_new = new Payment({
-    id_pago: 443,
-    dni: "246",
+    id_pago: 532,
+    dni: 80808080,
     fecha: new Date(),
     clase :"Pilates",
     monto: 500
@@ -136,7 +137,30 @@ mongoose.connect(url, function (err) {
                                     User.deletePorDni(10101010,function(err,result){
                                         console.log("Entro a borrar")
                                         console.log(result)
-                                        mongoose.connection.close();
+                                        pay_new.save(function(err,result){
+                                            if (err)
+                                                console.log(err)
+                                            else{
+                                                console.log("Agrego al PAGO correctamentes")
+                                                console.log(result)
+                                                Payment.findPago(532, function(err,pay){
+                                                    if (err)
+                                                        console.log(err)
+                                                    else{
+                                                        console.log("Encontro con el find Pago")
+                                                        console.log(pay)
+                                                        Payment.deletePago(532, function(err,pay){
+                                                            if (err)
+                                                                console.log(err)
+                                                            else
+                                                                console.log("Elimino los pago")
+                                                                console.log(pay)
+                                                                mongoose.connection.close();
+                                                        })
+                                                    }
+                                                })
+                                            }
+                                        })
 
                                     })
                                 });                               
