@@ -1,0 +1,34 @@
+Video: https://drive.google.com/file/d/1Vd5UP6wozzOF2RvrDQmF4Cju8WeGSPbm/view
+Filmina: https://classroom.google.com/u/1/c/NTc2ODE3MzUwNzBa/a/MTA5MTgyMDc4ODky/details?hl=es
+
+Tener una API me permite que sea el SO operatvio q sea para el q esta hecha la app (Windows,Android,iOS)
+Si tenemos una API tendremos una representacion uniforme para pedir y madnar datos a la base de datos
+
+API REST
+Es una API que utiliza HTTP y no guarda el estado de la conexion
+REST es un estilo arquitectonico, que tiene cliente y servidor y no se tiene idea del estado anterior
+
+GET-POST-PUT-DELETE
+
+Hay q tratar de usar los codigos de HTTP(200,300,400)
+
+Una buena API siempre responde algo(sea error o no)
+///////////////////////////////////////////////////
+Including the routes in the application (app.js)
+
+var routes = require('./app_server/routes/index)
+var routesApi = require('./app_api/routes/index) //Declaramos en un directorio un archivo donde tenga las rutas de nuestra api. En este archivo index vamos a declarar las rutas q vamos a usar
+
+app.use("/",routes)
+app.use('/api',routesApi) //Aca le decimos: Las URL q tengan el mapeo "/api" que utilizen este controlador routerApi
+
+Specifyng the request methods in the routes
+(app_api/routes/index.js)
+//EN EL INDEX.JS VAMOS A ESPECIFICAR ESTAS RUTAS
+
+router.get('/location',ctrlLocations.locationInfo) //Para los q es recuperar la ubicacion de los locales, usamos un get que va a estar asociado con la direccion location y le decimos q utilize la funcion ctrl... que es la q se va a encargar de conectarse a la base de mongodb utilizando mongoose
+router.post('/locations',ctrlLocations.locationsCreate) 
+
+//Termina a la 1.15.00 la explicacion
+//En 1.33.00 le dice a guido q le pasa un link con muchos ejemplos de express
+

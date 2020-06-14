@@ -30,14 +30,14 @@ var paymentSchema = new Schema({
     monto: {type : Number },
 })
 
-//Declaramos las queris y las funciones para los usuarios
+//Declaramos las queries y las funciones para los usuarios
 
 userSchema.query.porNombre = function(name) {
     return this.where({ nombre: new RegExp(name, 'i') });
 };
 
 userSchema.statics.findPorNombre = function (name , callback){
-    return this.find( {nombre: new RegExp(name, 'i') }, callback) //VER BIEN Q ES ESTO DE RegExp
+    return this.find( {nombre: new RegExp(name, 'i') }, callback) 
 }
 
 userSchema.statics.deletePorDni = function (_dni , callback){
@@ -108,8 +108,6 @@ var pay_new = new Payment({
     clase :"Pilates",
     monto: 500
 })
-
-
 
 const nuevosValores = {nombre: 'Roman'};
 
