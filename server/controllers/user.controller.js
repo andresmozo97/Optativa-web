@@ -1,23 +1,23 @@
-const user = require("../models/user");
+const User = require("../models/user");
+
 
 const userCtrl = {};
 
-user.userCtrl.getUsers = function(req,res){
-        res.json({
-            status: "rest api funcionando"   
-        })
-    }
+userCtrl.getUsers = async function(req,res){
+        const users = await User.find(); //lo q hace el async-await es decir bueno, este find va a tardar, asiq espera hasta q termine para hacer la sgte
+        res.json(users);
+}
 
 
-user.userCtrl.getUser = function(){
+userCtrl.getUser = function(){
 
 }
 
-user.userCtrl.updateUser = function(){
+userCtrl.updateUser = function(){
 
 }
 
-user.userCtrl.deleteUser = function(){
+userCtrl.deleteUser = function(){
 
 }
 

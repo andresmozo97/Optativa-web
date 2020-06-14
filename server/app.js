@@ -15,15 +15,21 @@ app.use(express.json()); //Con esto hago q Express(el servidor) pueda entender e
 
 
 //Routes
+app.use(require('./routes/user.routes'))
 
+
+
+//Starting the server
+app.listen(app.get('port'), function () {
+  console.log('Example app listening on PORT ' , app.get('port'));
+});
+
+/*
 app.get('/', function (req, res) {
   res.send('HellooooOOO World!');
 });
 
-//Devolver todos los usuarios
-app.get('/users', function (req, res) {
-  res.send('Aca tiene q devolver todos los usuarios');
-});
+
 
 //Devolver un solo usuario
 app.get('/user:id', function (req, res) {
@@ -56,6 +62,6 @@ app.delete('/user/:dni', function (req, res) {
   res.send("Usuario borrado");
 });
 
-app.listen(app.get('port'), function () {
-  console.log('Example app listening on PORT ' , app.get('port'));
-});
+
+
+*/
