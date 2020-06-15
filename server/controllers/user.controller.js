@@ -1,5 +1,5 @@
 const User = require("../models/user");
-const user = require("../models/user");
+const user = require("../models/user");  // Esta de mas o te olvidaste de usar andrelo? ahre AAAAAAAAA
 
 
 const userCtrl = {};

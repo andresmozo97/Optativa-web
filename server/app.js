@@ -1,5 +1,5 @@
 const express = require('express');
-const morgan = require('morgan')
+const mornpmgan = require('morgan')
 var app = express(); //app es un servidor
 
 const { mongoose } = require('./database') //Requiero mongoose de el archivo database.js (SOLO me interesa el mongoose(por eso los {})
@@ -16,6 +16,7 @@ app.use(express.json()); //Con esto hago q Express(el servidor) pueda entender e
 
 //Routes
 app.use(require('./routes/user.routes'))
+app.use(require('./routes/payment.routes'))
 
 
 

@@ -19,11 +19,10 @@ var userSchema = new Schema({ // define a schema
     dni: {type : Number },
     fechaInicio: {type : Date },
     clases: {type : [] },
-    pagos: {type : [] }
+    pagos: {type : [Schema.Types.ObjectId] }
     });
 
-var paymentSchema = new Schema({
-    id_pago: {type : Number },
+var paymentSchema = new Schema({ // el _id no lo pongo porque ya lo asigna mongoose
     dni: {type : Number },
     fecha: {type : Date },
     clase :{type : String },
@@ -52,7 +51,11 @@ userSchema.statics.modifyPorDni = function (_dni , new_atts, callback){
 
 //Declaramos las funciones para el esquema payment
 paymentSchema.statics.findPago = function (_id_pago , callback){
-    return this.find( {id_pago : _id_pago}, callback)
+    return this.find( {_id : _id_pago}, callback)
+}
+
+paymentSchema.statics.findAll = function(cb){
+    return this.find({}, cb);
 }
 
 paymentSchema.statics.ModifyPago = function (_id_pago ,new_atts, callback){
@@ -60,7 +63,7 @@ paymentSchema.statics.ModifyPago = function (_id_pago ,new_atts, callback){
 }
 
 paymentSchema.statics.deletePago = function (_id_pago , callback){
-    return this.deleteMany( {id_pago : _id_pago }, callback)
+    return this.deleteMany( {_id : _id_pago }, callback)
 }
 
 
@@ -77,7 +80,7 @@ var new_user1 = new User({
     dni: '10101010',
     fechaInicio: new Date(),
     clases: ['Futbol'],
-    pagos: [10,100,1000]
+    pagos: ['5ee695161287a302e8215bb7','5ee695161287a302e8215bb7','5ee695161287a302e8215bb7']
 });
 
 var new_user2 = new User({
@@ -87,7 +90,7 @@ var new_user2 = new User({
     dni: '23232323',
     fechaInicio: new Date(),
     clases: ['Basket'],
-    pagos: [23,2323,23000]
+    pagos: ['5ee695161287a302e8215bb7','5ee695161287a302e8215bb7','5ee695161287a302e8215bb7']
 });
 
 var new_user3 = new User({
@@ -97,12 +100,12 @@ var new_user3 = new User({
     dni: '80808080',
     fechaInicio: new Date(),
     clases: ['Tenis'],
-    pagos: [80,8080,80000]
+    pagos: ['5ee69e1ebe94c703fa4c4a0e','5ee69bf49e063603ce05212c','5ee695161287a302e8215bb7']
 });
 
 //Pagos
 var pay_new = new Payment({
-    id_pago: 532,
+    //_id: 532,
     dni: 80808080,
     fecha: new Date(),
     clase :"Pilates",
@@ -112,63 +115,85 @@ var pay_new = new Payment({
 const nuevosValores = {nombre: 'Roman'};
 
 
-mongoose.connect(url, function (err) {
-    if (err) throw err;
-    console.log("Successfully connected ");
-    new_user1.save(function (err) {
-        if (err) console.log(err);
-        else {
-            console.log("Agrego al usuario correctamente");
-            new_user2.save(function (err) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    User.find().porNombre("Lionel").exec(function(err, usuarios) {
-                        console.log(usuarios);
-                        User.findPorNombre('Tomas', function (err, usuarios) {
-                            console.log(usuarios);
-                            User.modifyPorDni(10101010,nuevosValores,function(err,user){
-                                console.log(user);
-                                User.findPorNombre('Roman', function (err, usuarios){
-                                    console.log("Entro a ver si lo modifico por roman");
-                                    console.log(usuarios);
-                                    User.deletePorDni(10101010,function(err,result){
-                                        console.log("Entro a borrar")
-                                        console.log(result)
-                                        pay_new.save(function(err,result){
-                                            if (err)
-                                                console.log(err)
-                                            else{
-                                                console.log("Agrego al PAGO correctamentes")
-                                                console.log(result)
-                                                Payment.findPago(532, function(err,pay){
-                                                    if (err)
-                                                        console.log(err)
-                                                    else{
-                                                        console.log("Encontro con el find Pago")
-                                                        console.log(pay)
-                                                        Payment.deletePago(532, function(err,pay){
-                                                            if (err)
-                                                                console.log(err)
-                                                            else
-                                                                console.log("Elimino los pago")
-                                                                console.log(pay)
-                                                                mongoose.connection.close();
-                                                        })
-                                                    }
-                                                })
-                                            }
-                                        })
-
-                                    })
-                                });                               
-                        
-                            });
-                        });
-
-                    });
-                }
-            });
-        }
+mongoose.connect(url, function(err){
+    if(err) throw err;
+    console.log("connected!");
+    pay_new.save(function(err){
+        if(err) throw err;
+        console.log("new payment saved");
+        Payment.findAll(function(err, res){
+            if (err) throw err;
+            console.log(res);
+            new_user3.save(function(err){
+                if(err) throw err;
+                console.log('new user saved');
+                Payment.findPago(new_user3['pagos'][0], function(err, res){
+                    if(err) throw err;
+                    console.log('payment:\n', res);
+                    mongoose.connection.close();
+                })
+            })
+        })
     })
-})
+});
+
+// mongoose.connect(url, function (err) {
+//     if (err) throw err;
+//     console.log("Successfully connected ");
+//     new_user1.save(function (err) {
+//         if (err) console.log(err);
+//         else {
+//             console.log("Agrego al usuario correctamente");
+//             new_user2.save(function (err) {
+//                 if (err) {
+//                     console.log(err);
+//                 } else {
+//                     User.find().porNombre("Lionel").exec(function(err, usuarios) {
+//                         console.log(usuarios);
+//                         User.findPorNombre('Tomas', function (err, usuarios) {
+//                             console.log(usuarios);
+//                             User.modifyPorDni(10101010,nuevosValores,function(err,user){
+//                                 console.log(user);
+//                                 User.findPorNombre('Roman', function (err, usuarios){
+//                                     console.log("Entro a ver si lo modifico por roman");
+//                                     console.log(usuarios);
+//                                     User.deletePorDni(10101010,function(err,result){
+//                                         console.log("Entro a borrar")
+//                                         console.log(result)
+//                                         pay_new.save(function(err,result){
+//                                             if (err)
+//                                                 console.log(err)
+//                                             else{
+//                                                 console.log("Agrego al PAGO correctamentes")
+//                                                 console.log(result)
+//                                                 Payment.findPago('5ee695161287a302e8215bb7', function(err,pay){
+//                                                     if (err)
+//                                                         console.log(err)
+//                                                     else{
+//                                                         console.log("Encontro con el find Pago")
+//                                                         console.log(pay)
+//                                                         Payment.deletePago('5ee695161287a302e8215bb7', function(err,pay){
+//                                                             if (err)
+//                                                                 console.log(err)
+//                                                             else
+//                                                                 console.log("Elimino los pago")
+//                                                                 console.log(pay)
+//                                                                 mongoose.connection.close();
+//                                                         })
+//                                                     }
+//                                                 })
+//                                             }
+//                                         })
+
+//                                     })
+//                                 });                               
+                        
+//                             });
+//                         });
+
+//                     });
+//                 }
+//             });
+//         }
+//     })
+// })
