@@ -10,13 +10,13 @@ router.post('/user', user.createUser)
 
 //Read
 router.get('/users', user.getAllUsers)
-router.get('/user/:dni' , user.getUser)
+router.get('/user/:dni', user.getUser)
 
 //Update
-router.put('/user/:dni' , user.updateUser )
+router.put('/user/:dni', user.updateUser)
 
 //Delete
-router.delete('/user/:dni',user.deleteUser)
+router.delete('/user/:dni', user.deleteUser)
 
 
 module.exports = router

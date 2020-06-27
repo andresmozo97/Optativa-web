@@ -29,6 +29,7 @@ paymentSchema.statics.deletePayment = function (_id_pago , callback){
 paymentSchema.statics.createPayment = function(payment_atts, callback){
     const Payment = mongoose.model('Payment', paymentSchema)
     var new_payment = new Payment(payment_atts);
+    new_payment['fecha'] = new Date();
     new_payment.save(callback);
 }
 

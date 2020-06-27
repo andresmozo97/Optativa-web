@@ -33,6 +33,7 @@ userSchema.statics.deletePorDni = function (_dni , callback){
 userSchema.statics.createUser = function(user_atts, callback){
     const User = mongoose.model('User', userSchema)
     var new_user = new User(user_atts);
+    new_user['fechaInicio'] = new Date();
     new_user.save(callback);
 }
 
