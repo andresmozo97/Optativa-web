@@ -6,25 +6,48 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular.min.js"></script>
     <script src="controller.js"></script>
     <link rel= "stylesheet" href= "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css " integrity= "sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin= "anonymous">
+
+    <style >
+        .sortorder:after {
+        content: '\25b2'; 
+        }
+        .sortorder.reverse:after {
+        content: '\25bc'; 
+        }
+    </style >
+    <title > Gestion de usuario Punto Gym </title >
 </head>
 <body ng-controller = "GYM_controller">
+    <h1> Punto gym - Gestion de usuarios </h1>
+    <pre> Sort by = {{ propertyName }}; reverse = {{ reverse }} </pre>
+    <hr/>
+        <button ng-click= " propertyName = null; reverse = false "> Set to unsorted</button> 
+    <hr/>
     <table class="table">
         <thead>
             <tr>
             <th>
-            <button> Nombre </button>
+                <button ng-click= "sortBy('nombre')"> Nombre </button>
+                <span class= "sortorder" ng-show= " propertyName === 'nombre' " ng-class= "{ reverse: reverse }"></span>
             </th>
             <th>
-            <button> Apellido </button>
+                <button ng-click= "sortBy('apellido')"> Apellido </button>
+                <span class= "sortorder" ng-show= " propertyName === 'apellido' " ng-class= "{ reverse: reverse }"></span>
+
             </th>
             <th>
-            <button> DNI </button>
+                <button ng-click= "sortBy('dni')"> DNI </button>
+                <span class= "sortorder" ng-show= " propertyName === 'dni' " ng-class= "{ reverse: reverse }"></span>
+
             </th>
             <th>
-            <button> Peso </button>
+                <button ng-click= "sortBy('peso')"> Peso </button>
+                <span class= "sortorder" ng-show= " propertyName === 'peso' " ng-class= "{ reverse: reverse }"></span>
+
             </th>
             <th>
-            <button> Fecha Inicio </button>
+                <button ng-click= "sortBy('fechaInicio')"> Fecha Inicio </button>
+                <span class= "sortorder" ng-show= " propertyName === 'fechaInicio' " ng-class= "{ reverse: reverse }"></span>
             </th>
             </tr>
         </thead>
@@ -36,12 +59,12 @@
                 <td><input class="form-control" ng-model="user.peso"></td>
                 <td><input class="form-control" ng-model="user.fechaInicio"></td>
 
-                <td><button class="btn btn-primary" ng-click="addUser()">Agregar Usuario</button></td>
-                <td><button class="btn btn-info">Modificar Usuario</button></td>
-                <td><button class="btn btn-info">Limpiar Campos</button></td>
+                <td><button class="btn btn-primary" ng-click=addUser()>Agregar Usuario</button></td>
+                <td><button class="btn btn-info" ng-click="update()"> Modificar Usuario</button></td>
+                <td><button class="btn btn-info" ng-click="deselect()">Limpiar Campos</button></td>
 
             </tr>
-            <tr ng-repeat="_user in users">
+            <tr ng-repeat="_user in users | orderBy:propertyName:reverse">
                 <td>{{_user.nombre}}</td>
                 <td>{{_user.apellido}}</td>
                 <td>{{_user.dni}}</td>
@@ -49,8 +72,8 @@
                 <td>{{_user.fechaInicio}}</td>
 
                 <td>
-                    <button class="btn btn-warning">Editar</button>
-                    <button class="btn btn-danger">Eliminar</button>
+                    <button class="btn btn-warning" ng-click= "edit(_user.dni)">Editar Usuario</button>
+                    <button class="btn btn-danger" ng-click= "delete(_user.dni)">Eliminar Usuario</button>
                 </td>
             </tr>
         </tbody>
