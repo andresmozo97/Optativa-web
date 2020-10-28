@@ -5,32 +5,35 @@ app.controller("GYM_controller", function($scope, $http){
     // las variables que le agreguemos a scope van a estar disponibles
     //en el codigo del html para poder referenciar con llaves
     const host = 'http://localhost:4000'
-    $scope.users = [];
-    $scope.user = {
+    $scope.edit_user_dni = -1;  //sirve para saber el dni del usuario que se esta editando y que si se
+                                //llega a editar el dni, no se pierda el dni viejo
+
+    $scope.users = [];          //arreglo de usuarios que contiene, luego del reresh(), todos los usuarios de la base
+    
+    $scope.user = {             //modelo para guardar los datos del usuario que se esta editando
         nombre : '',
         apellido : '',
         peso : '',
         dni : '',
         fechaInicio : '',
-        clases : [],
+        clases : [],            //inicialmente comienza sin clases y sin pagos. Se agregan aparte
         pagos : []
     }
+    $scope.propertyName = 'nombre'
+    $scope.reverse = false;
 
     var refresh = function(){
         $http.get(host+'/users').then(function(response){
-            console.log('ok', response);
+            console.log('Refresh OK', response);
             $scope.users = response.data;
         }
         , 
         function errorCallback(response){
-            console.log('bad', response);
+            console.log('Bad Refresh', response);
         })
     }
 
     refresh();
-
-    $scope.propertyName = 'nombre'
-    $scope.reverse = false;
 
     $scope.sortBy = function ( propertyName ) {
         console.log("entro al sort by con "+ propertyName)
@@ -42,37 +45,46 @@ app.controller("GYM_controller", function($scope, $http){
 
     //addUser toma los datos de los campos de texto y agrega un usuario
     $scope.addUser = function () {
-        console.log ( $scope.user );
+        $scope.user.fechaInicio = new Date();
+        //console.log($scope.user.nombre);
         console.log('adding user...');
-        //$http.post(host + '/user', $scope.user )
-        $http({
-            method: 'post',
-            url: host + '/user',
-            body: {
-                new_user:$scope.user
+        $http.post(host + '/user', {
+                     "new_user" : {
+                         "nombre" : $scope.user.nombre,
+                         "apellido" : $scope.user.apellido,
+                         "peso": $scope.user.peso,
+                         "dni": $scope.user.dni,
+                         "clases": [],
+                         "pagos": []
+                     } })
+        .then(function ( response ) {
+            refresh () ; 
+            console.log ("User added succesfully ", response );
+        }, 
+            function errorCallback ( response ) {
+                console.log ("Bad ADD", response );
             }
-          })
-        .then ( function ( response ) {
-                    refresh () ; 
-                    console.log ("Ok ADD ", response );
-                    }, 
-                function errorCallback ( response ) {
-                    console.log (" Bad ADD ", response );
-                }
-            );
+        )
     }
 
     // update toma los datos de los campos de texto y los envia a la API
-    $scope.update = 
-        function () {
-            $http.put(host + '/user/' + $scope.dni ,$scope.user)
+    $scope.update = function () {
+            $http.put(host + '/user/' + $scope.edit_user_dni ,
+            {
+                "new_atts" : {
+                    "dni": $scope.user.dni,
+                    "nombre" : $scope.user.nombre,
+                    "apellido" : $scope.user.apellido,
+                    "peso": $scope.user.peso,
+                }
+            })
             .then ( function ( response ) {
                         refresh () ; 
-                        console.log ("OK Update ", response ) ;
+                        console.log ("User updated sucessfully", response ) ;
                     }, 
                     function errorCallback ( response ) {
                         refresh () ; 
-                        console.log (" BAD Update !!", response );
+                        console.log ("BAD Update", response );
                     }
                 );
         }
@@ -83,10 +95,10 @@ app.controller("GYM_controller", function($scope, $http){
         $http.delete (host + '/user/' + id)
         .then ( function ( response ) {
             refresh () ; 
-            console.log ("Ok delete ", response ) ;
+            console.log ("User deleted sucessfully", response ) ;
             }, 
             function errorCallback ( response ) {
-                console.log (" BAD delete !!", response );
+                console.log ("BAD delete", response );
             }
         );
     }
@@ -94,7 +106,8 @@ app.controller("GYM_controller", function($scope, $http){
     //Edit llena los campos de texto para editar el usuario
     $scope.edit = function (id){
         console.log("el id es " +id)
-        $http.get(host + '/user/' + id)
+        $scope.edit_user_dni = id;
+        $http.get(host + '/user/' + $scope.edit_user_dni)
         .then ( function ( response ) {
                     $scope.user = response.data;
                     console.log ("OK Edit RD: ", response.data ) ;
@@ -107,8 +120,7 @@ app.controller("GYM_controller", function($scope, $http){
 
         
     // deselect deja en blanco los campos de texto
-    $scope.deselect = 
-        function () {
+    $scope.deselect = function () {
             console.log("entro al deselect");
             $scope.user = ({}) ; 
         }      

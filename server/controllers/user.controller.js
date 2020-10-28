@@ -38,8 +38,6 @@ userCtrl.getUser = function(req, res){
 
 
 userCtrl.createUser = function(req, res){
-    console.log("entro en Create user");
-    console.log("req.body es " +req.body);
         if(req.body && req.body.new_user){
                 User.createUser(req.body.new_user, function(err, result){
                     if (err)
